@@ -23,7 +23,7 @@
     <bean id="activeMQQueue" class="org.apache.activemq.command.ActiveMQQueue">
         <constructor-arg value="wutao_queue"/>
     </bean>
-    
+
     <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
         <property name="connectionFactory" ref="connectionFactory"></property>
         <property name="pubSubDomain" value="false"></property>
@@ -31,7 +31,24 @@
         <property name="receiveTimeout" value="10000"></property>
     </bean>
 
-    <!--<bean id="listener" class="com.dlh.listener.MyListener"></bean>-->
+    <bean id="activeMQTopic" class="org.apache.activemq.command.ActiveMQTopic">
+        <constructor-arg value="wutao_topic"/>
+    </bean>
+
+    <bean id="jmsTopicTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="connectionFactory"></property>
+        <property name="pubSubDomain" value="true"></property>
+        <!--消息不持久化-->
+        <property name="explicitQosEnabled" value="false"></property>
+    </bean>
+
+    <bean class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+    <property name="connectionFactory" ref="connectionFactory"></property>
+    <property name="destination" ref="activeMQTopic"></property>
+    <property name="messageListener" ref="listener"></property>
+    </bean>
+
+    <bean id="listener" class="com.dlh.listener.MyListener"></bean>
     <!---->
     <!--<bean class="org.springframework.jms.listener.DefaultMessageListenerContainer">-->
         <!--<property name="connectionFactory" ref="connectionFactory"></property>-->

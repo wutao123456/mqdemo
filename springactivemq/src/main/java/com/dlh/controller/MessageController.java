@@ -2,8 +2,7 @@ package com.dlh.controller;
 
 import com.dlh.service.ConsumerService;
 import com.dlh.service.ProducerService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.jms.Destination;
 import javax.jms.TextMessage;
+import javax.jms.Topic;
 
 /**
  * @author wutao
@@ -20,10 +20,13 @@ import javax.jms.TextMessage;
  */
 @Controller
 public class MessageController {
-    private Logger logger = LoggerFactory.getLogger(MessageController.class);
+    private static Logger logger = Logger.getLogger(MessageController.class);
 
     @Resource(name = "activeMQQueue")
     private Destination destination;
+
+    @Resource(name = "activeMQTopic")
+    private Topic topic;
 
     //队列消息生产者
     @Resource(name = "producerService")
@@ -38,6 +41,14 @@ public class MessageController {
     public void send(String msg) {
         logger.info(Thread.currentThread().getName()+"------------send to jms Start");
         producer.sendMessage(msg);
+        logger.info(Thread.currentThread().getName()+"------------send to jms End");
+    }
+
+    @RequestMapping(value = "/SendTopicMessage", method = RequestMethod.GET)
+    @ResponseBody
+    public void sendTopic(String msg) {
+        logger.info(Thread.currentThread().getName()+"------------send to jms Start");
+        producer.sendTopicMessage(topic,msg);
         logger.info(Thread.currentThread().getName()+"------------send to jms End");
     }
 
