@@ -22,6 +22,9 @@ public class StubTest {
         System.out.println("consumer start");
     }
 
+    /**
+     * 测试本地存根
+     */
     @Test
     public void test(){
         DemoService demoService = ctx.getBean(DemoService.class);

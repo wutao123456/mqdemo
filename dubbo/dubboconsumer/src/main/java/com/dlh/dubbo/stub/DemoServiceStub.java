@@ -18,6 +18,11 @@ public class DemoServiceStub implements DemoService {
         this.demoService = demoService;
     }
 
+    /**
+     * 测试本地存根
+     * @param id
+     * @return
+     */
     public List<String> getPermissions(Long id) {
         List<String> resultList = new ArrayList<String>();
         if(id == 1){
