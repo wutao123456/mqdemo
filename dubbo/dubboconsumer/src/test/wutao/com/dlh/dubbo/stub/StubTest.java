@@ -1,5 +1,6 @@
 package com.dlh.dubbo.stub;
 
+import com.alibaba.dubbo.rpc.RpcContext;
 import com.dlh.dubbo.demo.DemoService;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +28,17 @@ public class StubTest {
      */
     @Test
     public void test(){
+        DemoService demoService = ctx.getBean(DemoService.class);
+        List<String> result = demoService.getPermissions(2L);
+        System.out.println(result);
+    }
+
+    /**
+     * 测试token认证
+     */
+    @Test
+    public void testToken(){
+        RpcContext.getContext().setAttachment("token","123456");
         DemoService demoService = ctx.getBean(DemoService.class);
         List<String> result = demoService.getPermissions(2L);
         System.out.println(result);
