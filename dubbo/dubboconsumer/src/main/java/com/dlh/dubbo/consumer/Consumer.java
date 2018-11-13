@@ -2,8 +2,14 @@ package com.dlh.dubbo.consumer;
 
 import com.alibaba.dubbo.rpc.RpcContext;
 import com.alibaba.dubbo.rpc.service.EchoService;
+import com.dlh.dubbo.callback.CallbackListener;
+import com.dlh.dubbo.callback.CallbackService;
 import com.dlh.dubbo.demo.DemoService;
+import com.dlh.dubbo.notify.NotifyImpl;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.util.List;
+import java.util.Map;
 
 public class Consumer {
 
@@ -27,5 +33,18 @@ public class Consumer {
         System.out.println(status);
         System.out.println("consumer");
         System.out.println(demoService.getPermissions(1L));
+
+
+        //测试回调
+        CallbackService callbackService = ctx.getBean(CallbackService.class);
+        callbackService.addListener("test", new CallbackListener() {
+            public void changed(String msg) {
+                System.out.println("callback: "+msg);
+            }
+        });
+
+        //测试事件通知
+        NotifyImpl notify = (NotifyImpl) ctx.getBean("notifyService");
+        Map<Long, List<String>> rets = notify.rets;
     }
 }

@@ -6,9 +6,18 @@
        http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
     <dubbo:application name="demotest-consumer" owner="programmer" organization="dubbox"/>
     <!--向 zookeeper 订阅 provider 的地址，由 zookeeper 定时推送-->
-    <dubbo:registry address="zookeeper://192.168.0.200:2181"/>
+    <dubbo:registry address="zookeeper://192.168.2.216:2181"/>
     <!--使用 dubbo 协议调用定义好的 api.PermissionService 接口-->
     <!--check属性:启动时检查服务的可用性-->
     <!--如果是线上需求需要点对点，可在 <dubbo:reference> 中配置 url 指向提供者，将绕过注册中心，多个地址用分号隔开-->
-    <dubbo:reference id="permissionService" interface="com.dlh.dubbo.demo.DemoService" url="dubbo://localhost:20880"/>
+    <dubbo:reference id="permissionService" interface="com.dlh.dubbo.demo.DemoService" stub="com.dlh.dubbo.stub.DemoServiceStub">
+        <!--oninvoke参数必须与getPermissions方法一致-->
+        <!--onreturn 第一个参数必须与getPermissions方法的返回类型一致,后面所有参数都是getPermissions方法的入参-->
+        <!--onthrow方法同上-->
+        <dubbo:method name="getPermissions" async="false" oninvoke="notifyService.oninvoke" onreturn="notifyService.onreturn" onthrow="notifyService.onthrow"></dubbo:method>
+    </dubbo:reference>
+
+    <dubbo:reference id="callbackService" interface="com.dlh.dubbo.callback.CallbackService"/>
+
+    <bean id="notifyService" class="com.dlh.dubbo.notify.NotifyImpl"></bean>
 </beans>
