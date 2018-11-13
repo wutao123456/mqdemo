@@ -16,6 +16,7 @@
     <!--具体实现该接口的 bean-->
     <bean id="demoService" class="com.dlh.dubbo.demo.impl.DemoServiceImpl"/>
     
+
     
     
     <bean id="callbackService" class="com.dlh.dubbo.callback.CallbackServiceImpl"></bean>
