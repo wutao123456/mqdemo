@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <import resource="applicationcontext-datasource.xml"></import>
+
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+    <context:component-scan base-package="com.dlh.aspect.**"></context:component-scan>
+
+    <bean id="dataSource" class="com.dlh.un.ds.DynamicDataSource">
+        <property name="targetDataSources">
+            <map>
+                <entry key="core1" value-ref="core1"></entry>
+            </map>
+        </property>
+        <property name="defaultTargetDataSource" ref="def"></property>
+    </bean>
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"></property>
+        <property name="mapperLocations" value="classpath:sqlmapper/*/*Mapper.xml"></property>
+    </bean>
+
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.dlh.mc.dao.**" ></property>
+    </bean>
+
+    <bean id="userService" class="com.dlh.mc.service.UserService"></bean>
+
+
+    <bean id="loggerTest" class="com.dlh.aspect.LoggerTest"></bean>
+
+    <bean id="adviceTest" class="com.dlh.aspect.AdviceTest"></bean>
+
+    <bean class="com.dlh.util.TestBean"/>
+
+
+    <!--<aop:config>-->
+        <!--&lt;!&ndash;<aop:aspect ref="loggerTest">&ndash;&gt;-->
+            <!--&lt;!&ndash;<aop:before method="begin" pointcut="execution(* com.dlh.mc.service..*.*(..)))"></aop:before>&ndash;&gt;-->
+        <!--&lt;!&ndash;</aop:aspect>&ndash;&gt;-->
+
+        <!--&lt;!&ndash;配置切面表达式&ndash;&gt;-->
+        <!--<aop:pointcut id="target" expression="execution(* com.dlh.mc.service..*.*(..)))"></aop:pointcut>-->
+        <!--&lt;!&ndash;配置切面及通知&ndash;&gt;-->
+        <!--<aop:advisor advice-ref="adviceTest" pointcut-ref="target"></aop:advisor>-->
+
+        <!--&lt;!&ndash;等同于上面方式的简写&ndash;&gt;-->
+        <!--<aop:advisor advice-ref="adviceTest" pointcut="execution(* com.dlh.mc.service..*.*(..)))"></aop:advisor>-->
+    <!--</aop:config>-->
+
+    <aop:config>
+        <aop:aspect ref="chooseDB">
+            <aop:before method="beforeMethod" pointcut="execution(* com.dlh.mc.service..*.*(..)))"></aop:before>
+        </aop:aspect>
+    </aop:config>
+
+    <bean id="springContextHolder" class="com.dlh.util.SpringContextHolder" lazy-init="false"/>
+</beans>
