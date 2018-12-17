@@ -15,8 +15,9 @@ public class FilterChainDefinitionMapBuilder {
         map.put("/shiro/login","anon");
         map.put("/shiro/logout","logout");
         map.put("/unauthorized.jsp","anon");
-        map.put("/user.jsp","authc,roles[user]");
-        map.put("/admin.jsp","authc,roles[admin]");
+//        map.put("/user.jsp","authc,roles[user]");
+//        map.put("/admin.jsp","authc,roles[admin]");
+        //rememberMe配置user级别的过滤器
         map.put("/success.jsp","user");
         map.put("/**","authc");
         return map;
