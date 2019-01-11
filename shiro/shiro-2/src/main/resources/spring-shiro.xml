@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+        <property name="cacheManagerConfigFile" value="classpath:ehcache.xml"/>
+    </bean>
+
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <!--开启缓存后面就不会每次都走doGetAuthorizationInfo-->
+        <property name="cacheManager" ref="cacheManager"></property>
+        <property name="sessionManager" ref="sessionManager"/>
+        <property name="realm" ref="shiroRealm"></property>
+        <property name="rememberMeManager" ref="rememberMeManager"/>
+        <!--<property name="authenticator" ref="authenticator"/>-->
+    </bean>
+
+    <!--只需在securityManager配置authenticator属性即可-->
+    <bean id="authenticator" class="org.apache.shiro.authc.pam.ModularRealmAuthenticator">
+        <!--配置多个realm认证-->
+        <property name="realms">
+            <list>
+                <ref bean="shiroRealm"/>
+                <!--<ref bean="secondRealm"/>-->
+            </list>
+        </property>
+        <!--配置认证策略,默认为FirstSuccessfulStrategy-->
+        <property name="authenticationStrategy">
+            <bean class="org.apache.shiro.authc.pam.AllSuccessfulStrategy"></bean>
+        </property>
+    </bean>
+
+    <bean id="shiroRealm" class="com.dlh.wutao.shiro.realm.ShiroRealm">
+        <property name="credentialsMatcher">
+            <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+                <property name="hashAlgorithmName" value="MD5"/>
+                <property name="hashIterations" value="1024"/>
+            </bean>
+        </property>
+    </bean>
+
+
+
+    <!--id必须与web.xml文件中配置的DelegatingFilterProxy的<filter-name>一致-->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <property name="loginUrl" value="/login.jsp"/>
+        <property name="successUrl" value="/success.jsp"/>
+        <property name="unauthorizedUrl" value="unauthorized.jsp"/>
+        <property name="filterChainDefinitionMap" ref="filterChainMap"></property>
+        <!--url权限采取第一次匹配优先的方式,即从头开始使用第一个匹配的url模式对应的拦截器链-->
+        <!--<property name="filterChainDefinitions">-->
+            <!--<value>-->
+                <!--/login.jsp=anon-->
+                <!--/shiro/login=anon-->
+                <!--/shiro/logout=logout-->
+                <!--/unauthorized.jsp=anon-->
+                <!--#配置角色过滤器-->
+                <!--/user.jsp=roles[user]-->
+                <!--/admin.jsp=roles[admin]-->
+                <!--#everything else requires authentication-->
+                <!--/**=authc-->
+            <!--</value>-->
+        <!--</property>-->
+    </bean>
+
+
+    <!--构建filterChainMap可以代替filterChainDefinitions属性-->
+    <bean id="filterChainDefinitionMapBuilder" class="com.dlh.wutao.shiro.filterchain.FilterChainDefinitionMapBuilder"/>
+
+    <bean id="filterChainMap" factory-bean="filterChainDefinitionMapBuilder" factory-method="buildFilterChainDefinitionMap"></bean>
+
+
+    <!--sessionId生成器-->
+    <bean id="sessionIdGenerator" class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator"></bean>
+
+    <!--配置sessionDAO-->
+    <bean id="sessionDAO" class="com.dlh.wutao.shiro.session.MySessionDAO">
+        <property name="sessionIdGenerator" ref="sessionIdGenerator"/>
+        <property name="activeSessionsCacheName" value="shiro-activeSessionCache"/>
+    </bean>
+
+    <!--配置rememberMe开始-->
+    <!--
+        1.设置cookie,
+        2.配置rememberMeManager,
+        3.securityManager中设置rememberMeManager,
+        4.登录时设置rememberMe=true
+        5.设置user级别的过滤器
+    -->
+    <bean id="rememberMeCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+        <!-- 设置Cookie在浏览器中保存内容的名字，由用户自己来设置 -->
+        <constructor-arg value="wutao-RememberMe"/>
+        <property name="httpOnly" value="true"/>
+        <property name="maxAge" value="3600"/>
+        <!--<property name="name" value="sid"/>-->
+    </bean>
+
+    <bean id="rememberMeManager" class="org.apache.shiro.web.mgt.CookieRememberMeManager">
+        <property name="cipherKey" value="#{T(org.apache.shiro.codec.Base64).decode('4AvVhmFLUs0KTA3Kprsdag==')}"></property>
+        <property name="cookie" ref="rememberMeCookie"/>
+    </bean>
+    <!--配置rememberMe结束-->
+
+    <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+        <property name="globalSessionTimeout" value="1800000"/>
+        <property name="deleteInvalidSessions" value="true"/>
+        <!--<property name="sessionIdCookie" ref="cookie"/>-->
+        <!--<property name="sessionIdCookieEnabled" value="true"/>-->
+        <property name="sessionDAO" ref="sessionDAO"/>
+    </bean>
+</beans>

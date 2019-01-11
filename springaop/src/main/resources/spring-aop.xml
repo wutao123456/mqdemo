@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <bean id="testEntity" class="com.dlh.entity.TestEntity"></bean>
+
+    <!--aop:aspect大多用于日志，缓存-->
+    <!--配置切面-->
+    <!--aop:aspect开始-->
+    <bean id="testAspect" class="com.dlh.aspect.TestAspect"></bean>
+    <aop:config>
+        <aop:pointcut id="pointcut" expression="execution(* com.dlh.entity.*.*(..))"/>
+        <aop:aspect ref="testAspect">
+            <aop:before method="beforeMethod" pointcut-ref="pointcut"/>
+        </aop:aspect>
+    </aop:config>
+    <!--aop:aspect结束-->
+
+
+    <!--aop:advisor大多用于事务管理-->
+    <!--aop:advisor开始-->
+    <bean id="sleepAdvisor" class="com.dlh.advisor.SleepAdvisor"></bean>
+
+    <aop:config>
+        <aop:pointcut id="pointcut" expression="execution(* com.dlh.entity.*.*(..))"/>
+        <aop:advisor advice-ref="sleepAdvisor" pointcut-ref="pointcut"/>
+    </aop:config>
+    <!--aop:advisor结束-->
+
+
+    <!--aop:advisor开始-->
+    <!--GetUpAdvisor实现于MethodInterceptor,该接口可通知满足前置、后置、异常、返回通知-->
+    <bean id="getUpAdvisor" class="com.dlh.advisor.GetUpAdvisor"></bean>
+    <aop:config>
+        <aop:advisor advice-ref="getUpAdvisor" pointcut="execution(* com.dlh.entity.*.*(..))"/>
+    </aop:config>
+    <!--aop:advisor结束-->
+</beans>
