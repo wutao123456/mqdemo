@@ -9,4 +9,6 @@ public interface DemoService {
     List<String> getPermissions(Long id);
 
     User queryUserById(int id);
+
+    String mockTest(int id);
 }
