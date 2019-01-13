@@ -41,5 +41,7 @@ public class TestAnnotation {
         Method method = clazz.getMethod("test");
         MyMethodAnnotation myMethodAnnotation = method.getAnnotation(MyMethodAnnotation.class);
         System.out.println(myMethodAnnotation.value());
+        System.err.println(clazz.getSimpleName());
+        System.err.println(clazz.getName() + " 被注解 "+clazz.isAnnotationPresent(MyAnnotation.class));
     }
 }

@@ -12,7 +12,7 @@ public class HeapOOMTest {
 
     /**
      * 测试堆内存溢出
-     * 设置VM参数-Xms10m -Xmx10m
+     * 设置VM参数-verbose:gc -Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:SurvivorRatio=8
      * @param args
      */
     public static void main(String[] args) {

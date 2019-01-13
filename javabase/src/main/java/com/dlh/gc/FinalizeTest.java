@@ -7,6 +7,11 @@ package com.dlh.gc;
  */
 public class FinalizeTest {
 
+    /**
+     * -XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCApplicationStoppedTime
+     * 测试finalize方法
+     * @param args
+     */
     public static void main(String[] args) {
 
         Person p1 = new FinalizeTest().new Person();
@@ -39,7 +44,7 @@ public class FinalizeTest {
         }
 
         /**
-         * 对象被垃圾回收之前调用该方法
+         * java垃圾收集器将对象从内存中清理前需要进行的操作
          * @throws Throwable
          */
         @Override
