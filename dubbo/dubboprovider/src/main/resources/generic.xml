@@ -13,21 +13,13 @@
     <dubbo:protocol name="dubbo" port="20880"/>
     <!--使用 dubbo 协议实现定义好的 api.PermissionService 接口-->
 
-    <!--executes 服务端并发控制数,也可以在控制方法上-->
-    <!--token 服务开启token认证-->
-    <dubbo:service interface="com.dlh.dubbo.demo.DemoService" ref="demoService" protocol="dubbo" token="123456"/>
+    <!--泛化测试-->
+    <dubbo:service interface="com.dlh.dubbo.demo.service.EasyCommonService" ref="easyCommonService" protocol="dubbo"/>
     <!--具体实现该接口的 bean-->
-    <bean id="demoService" class="com.dlh.dubbo.demo.impl.DemoServiceImpl"/>
-
+    <bean id="easyCommonService" class="com.dlh.dubbo.demo.impl.EasyCommonServiceImpl"/>
 
     <!--参数信息详见http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-service.html-->
-    
-    <!--<bean id="callbackService" class="com.dlh.dubbo.callback.CallbackServiceImpl"></bean>-->
 
-    <!--callbacks 每一个连接的回调实例限制-->
-    <!--<dubbo:service interface="com.dlh.dubbo.callback.CallbackService" ref="callbackService" connections="1" callbacks="1000">-->
-        <!--<dubbo:method name="addListener">-->
-            <!--<dubbo:argument index="1" callback="true"></dubbo:argument>-->
-        <!--</dubbo:method>-->
-    <!--</dubbo:service>-->
+    <bean id="genericService" class="com.dlh.dubbo.demo.service.MyGenericService" />
+    <dubbo:service interface="com.dlh.dubbo.demo.DemoService" ref="genericService" />
 </beans>
