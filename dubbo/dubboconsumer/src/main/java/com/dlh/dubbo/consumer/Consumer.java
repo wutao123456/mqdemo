@@ -25,6 +25,8 @@ public class Consumer {
 
         // 本端是否为消费端，这里会返回true
         boolean isConsumerSide = RpcContext.getContext().isConsumerSide();
+        RpcContext.getContext().setAttachment("index","1");
+        RpcContext.getContext().setAttachment("token","123456");
         // 获取最后一次调用的提供方IP地址
         String serverIP = RpcContext.getContext().getRemoteHost();
         // 获取当前服务配置信息，所有配置信息都将转换为URL的参数
