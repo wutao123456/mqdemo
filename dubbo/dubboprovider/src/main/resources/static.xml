@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://dubbo.apache.org/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       http://dubbo.apache.org/schema/dubbo        http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
+    <!--定义了提供方应用信息，用于计算依赖关系；在 dubbo-admin 或 dubbo-monitor 会显示这个名字，方便辨识-->
+    <dubbo:application name="demotest-provider" owner="wutao" organization="dubbox"/>
+    <!--使用 zookeeper 注册中心暴露服务，注意要先开启 zookeeper-->
+    <!--为了开发中的服务不影响正在使用,使用属性register=false不注册正在开发的服务-->
+    <!--人工管理服务提供者的上线和下线,此时需将注册中心标识为非动态管理模式,服务断开时,注册中心依然存在,需手动删除-->
+    <dubbo:registry address="zookeeper://192.168.0.200:2181" dynamic="false"/>
+    <!-- 用dubbo协议在20880端口暴露服务 -->
+    <dubbo:protocol name="dubbo" port="20880"/>
+    <!--使用 dubbo 协议实现定义好的 api.PermissionService 接口-->
+
+    <!--executes 服务端并发控制数,也可以在控制方法上-->
+    <!--token 服务开启token认证-->
+    <dubbo:service interface="com.dlh.dubbo.demo.DemoService" ref="demoService" protocol="dubbo"/>
+    <!--具体实现该接口的 bean-->
+    <bean id="demoService" class="com.dlh.dubbo.demo.impl.DemoServiceImpl"/>
+
+
+    <!--参数信息详见http://dubbo.apache.org/zh-cn/docs/user/references/xml/dubbo-service.html-->
+    
+    <!--<bean id="callbackService" class="com.dlh.dubbo.callback.CallbackServiceImpl"></bean>-->
+
+    <!--callbacks 每一个连接的回调实例限制-->
+    <!--<dubbo:service interface="com.dlh.dubbo.callback.CallbackService" ref="callbackService" connections="1" callbacks="1000">-->
+        <!--<dubbo:method name="addListener">-->
+            <!--<dubbo:argument index="1" callback="true"></dubbo:argument>-->
+        <!--</dubbo:method>-->
+    <!--</dubbo:service>-->
+</beans>
