@@ -32,21 +32,21 @@ public class Consumer {
         // 获取当前服务配置信息，所有配置信息都将转换为URL的参数
         String application = RpcContext.getContext().getUrl().getParameter("application");
         System.err.println(isConsumerSide +": "+serverIP + ": " +application);
-        System.out.println(status);
+//        System.out.println(status);
         System.out.println("consumer");
         System.out.println(demoService.getPermissions(1L));
 
 
         //测试回调
-        CallbackService callbackService = ctx.getBean(CallbackService.class);
-        callbackService.addListener("test", new CallbackListener() {
-            public void changed(String msg) {
-                System.out.println("callback: "+msg);
-            }
-        });
-
-        //测试事件通知
-        NotifyImpl notify = (NotifyImpl) ctx.getBean("notifyService");
-        Map<Long, List<String>> rets = notify.rets;
+//        CallbackService callbackService = ctx.getBean(CallbackService.class);
+//        callbackService.addListener("test", new CallbackListener() {
+//            public void changed(String msg) {
+//                System.out.println("callback: "+msg);
+//            }
+//        });
+//
+//        //测试事件通知
+//        NotifyImpl notify = (NotifyImpl) ctx.getBean("notifyService");
+//        Map<Long, List<String>> rets = notify.rets;
     }
 }

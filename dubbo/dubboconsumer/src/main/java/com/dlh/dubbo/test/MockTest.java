@@ -20,7 +20,7 @@ public class MockTest {
 //        List<String> result = demoService.getPermissions((long) 2);
 //        System.out.println(result);
 
-        String re = demoService.mockTest(1);
+        String re = demoService.mockTest(2);
         System.out.println(re);
     }
 }

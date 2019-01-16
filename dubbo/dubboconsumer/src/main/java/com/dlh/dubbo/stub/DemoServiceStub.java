@@ -34,4 +34,8 @@ public class DemoServiceStub implements DemoService {
     public User queryUserById(int id) {
         return null;
     }
+
+    public String mockTest(int id) {
+        return null;
+    }
 }
