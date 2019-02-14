@@ -19,6 +19,12 @@ public class ThreadPoolTest {
                 System.out.println(Thread.currentThread().getName()+" run");
             }
         });
+        // 如果线程池中的线程数量大于corePoolSize时，
+        // 如果某线程空闲时间超过keepAliveTime，线程将被终止，
+        // 直至线程池中的线程数目不大于corePoolSize；
+        // 如果允许为核心池中的线程设置存活时间，
+        // 那么核心池中的线程空闲时间超过keepAliveTime，
+        // 线程也会被终止。
         ThreadPoolExecutor executor = new ThreadPoolExecutor(3,4,8, TimeUnit.SECONDS,new LinkedBlockingDeque<Runnable>());
         executor.execute(t1);
         executor.execute(t1);
