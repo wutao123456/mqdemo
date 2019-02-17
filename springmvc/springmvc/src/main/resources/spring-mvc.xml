@@ -26,4 +26,9 @@
 
     <!--<mvc:resources mapping="/js/**" location="/js/"/>-->
 
+    <bean id="person" class="com.dlh.entity.Person" init-method="init">
+        <property name="user" value="wutao"/>
+        <property name="password" value="123456"/>
+    </bean>
+
 </beans>
