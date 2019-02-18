@@ -16,7 +16,7 @@ public class App
         user.setCn_user_id("123456789012345");
         user.setCn_user_name("wutao_test");
         user.setCn_user_password("123456");
-        userService.save(user);
-        System.out.println();
+        userService.save(user);//测试声明式事务
+        userService.test(user);//测试编程式事务
     }
 }

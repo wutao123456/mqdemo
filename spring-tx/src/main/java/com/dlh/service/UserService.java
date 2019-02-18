@@ -11,4 +11,6 @@ public interface UserService {
 
     User findByName(String name);
     void save(User user);
+
+    void test(User user);
 }

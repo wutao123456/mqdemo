@@ -10,4 +10,9 @@
     <!--默认基于jdk动态代理,proxy-target-class=true时基于CGLIB动态代理-->
     <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="false"/>
 
+
+    <!--编程式事务管理-->
+    <bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+        <property name="transactionManager" ref="transactionManager"/>
+    </bean>
 </beans>
