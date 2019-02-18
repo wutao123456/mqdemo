@@ -13,4 +13,6 @@ public interface UserService {
     void save(User user);
 
     void test(User user);
+
+    void test1(User user);
 }

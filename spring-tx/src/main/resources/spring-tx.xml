@@ -15,4 +15,10 @@
     <bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
         <property name="transactionManager" ref="transactionManager"/>
     </bean>
+
+    <!--手动开启事务时需关闭tx:annotation-driven-->
+    <bean id="transactionDefinition" class="org.springframework.transaction.support.DefaultTransactionDefinition">
+        <property name="propagationBehaviorName" value="PROPAGATION_REQUIRED"/>
+    </bean>
+
 </beans>
