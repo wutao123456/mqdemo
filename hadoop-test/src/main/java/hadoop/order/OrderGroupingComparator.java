@@ -7,6 +7,7 @@ import org.apache.hadoop.io.WritableComparator;
  * @author wutao
  * @email wutao56789@gmail.com
  * @date 2019/5/26 23:15
+ * 使用自定义的对象作为key输出,就必须实现WritableComparable接口,重写compareTo方法
  */
 public class OrderGroupingComparator extends WritableComparator {
 

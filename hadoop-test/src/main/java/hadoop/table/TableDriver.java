@@ -8,6 +8,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.compress.BZip2Codec;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
@@ -32,6 +33,10 @@ public class TableDriver {
         job.setOutputKeyClass(TableBean.class);
         job.setOutputValueClass(NullWritable.class);
         //设置reduce端分组排序
+
+        //设置reduce端压缩
+        FileOutputFormat.setCompressOutput(job,true);
+        FileOutputFormat.setOutputCompressorClass(job, BZip2Codec.class);
         //设置输入输出路径
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
