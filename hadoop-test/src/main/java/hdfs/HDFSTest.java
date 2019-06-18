@@ -35,6 +35,7 @@ public class HDFSTest {
         configuration = new Configuration();
 //        System.setProperty("HADOOP_USER_NAME","root");
 //        fs = FileSystem.get(new URI(HDFS_PATH),configuration);
+        //指定root用户访问hdfs
         fs = FileSystem.get(new URI(HDFS_PATH),configuration,"root");
         System.out.println("HDFSTestTest.setUp");
     }
