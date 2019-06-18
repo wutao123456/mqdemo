@@ -18,6 +18,22 @@
 
 <configuration>
 
+<!--    <property>-->
+<!--        &lt;!&ndash; 是否在HDFS中开启权限检查。&ndash;&gt;-->
+<!--        <name>dfs.permissions.enabled</name>-->
+<!--        <value>true</value>-->
+<!--    </property>-->
+<!--    <property>-->
+<!--        &lt;!&ndash; 是否在hdfs开启acl，默认为false&ndash;&gt;-->
+<!--        <name>dfs.namenode.acls.enabled</name>-->
+<!--        <value>true</value>-->
+<!--    </property>-->
+
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://ubuntu:9000/</value>
+    </property>
+
     <property>
         <name>fs.file.impl</name>
         <value>com.conga.services.hadoop.patch.HADOOP_7682.WinLocalFileSystem</value>
