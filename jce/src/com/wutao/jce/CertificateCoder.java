@@ -1,7 +1,15 @@
 package com.wutao.jce;
 
+import sun.security.x509.X500Name;
+import sun.security.x509.X509CertImpl;
+import sun.security.x509.X509CertInfo;
+
 import javax.crypto.Cipher;
+import javax.net.ssl.*;
+import java.io.DataInputStream;
 import java.io.FileInputStream;
+import java.io.InputStream;
+import java.net.URL;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -15,6 +23,7 @@ import java.util.Enumeration;
 /**
  * @author wutao
  * @date 2019/9/17
+ * 数字证书
  */
 public class CertificateCoder extends Coder {
 
@@ -40,12 +49,26 @@ public class CertificateCoder extends Coder {
         return ks;
     }
 
+    /**
+     * 从密钥库中获取证书
+     * @param alias
+     * @param keyStorePath
+     * @param password
+     * @return
+     * @throws Exception
+     */
     private static Certificate getCertificate(String alias, String keyStorePath, String password) throws Exception {
         KeyStore ks = getKeyStore(keyStorePath, password);
         Certificate certificate = ks.getCertificate(alias);
         return certificate;
     }
 
+    /**
+     * 从文件中读取证书(该证书实际也是将密钥库中的证书写入到该文件的)
+     * @param certificatePath
+     * @return
+     * @throws Exception
+     */
     private static Certificate getCertificate(String certificatePath) throws Exception {
         CertificateFactory factory = CertificateFactory.getInstance(X509);
         FileInputStream fis = new FileInputStream(certificatePath);
@@ -54,7 +77,7 @@ public class CertificateCoder extends Coder {
     }
 
     /**
-     * 由keyStore获得私钥
+     * 从keyStore获得私钥
      *
      * @param alias
      * @param keyStorePath
@@ -69,7 +92,7 @@ public class CertificateCoder extends Coder {
     }
 
     /**
-     * 由Certificate获得公钥
+     * 从Certificate获得公钥
      *
      * @param certificatePath
      * @return
@@ -194,10 +217,28 @@ public class CertificateCoder extends Coder {
         return signature.verify(decryptBASE64(sign));
     }
 
+    public static SSLSocketFactory getSSLSocketFactory(String password,String keyStorePath,String trustKeyStorePath)throws Exception{
+        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
+        KeyStore keyStore = getKeyStore(keyStorePath,password);
+        keyManagerFactory.init(keyStore,password.toCharArray());
+
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("SunX509");
+        KeyStore trustKeyStore = getKeyStore(trustKeyStorePath,password);
+        trustManagerFactory.init(trustKeyStore);
+
+        SSLContext sslContext = SSLContext.getInstance("SSL");
+        sslContext.init(keyManagerFactory.getKeyManagers(),trustManagerFactory.getTrustManagers(),null);
+        return sslContext.getSocketFactory();
+    }
+
+    public static void configSSLSocketFactory(HttpsURLConnection connection, String password, String keyStorePath, String trustKeyStorePath)throws Exception{
+        connection.setSSLSocketFactory(getSSLSocketFactory(password,keyStorePath,trustKeyStorePath));
+    }
+
     private static String password = "123456";
-    private static String alias = "www.wutao.site";
-    private static String certificatePath = "d:/wutao.cer";
-    private static String keyStorePath = "d:/wutao.keystore";
+    private static String alias = "www.wutao.com";
+    private static String certificatePath = "f:/wutao.cer";
+    private static String keyStorePath = "f:/wutao.keystore";
 
     public static void main(String[] args) throws Exception{
         System.err.println("公钥加密——私钥解密");
@@ -236,12 +277,55 @@ public class CertificateCoder extends Coder {
         boolean verify = CertificateCoder.verify(signBytes,certificatePath,sign);
         System.out.println("验证签名："+verify);
 
+
         KeyStore keyStore = getKeyStore(keyStorePath,password);
         Enumeration enumeration = keyStore.aliases();
+        //从密钥库中遍历证书
         while (enumeration.hasMoreElements()){
             String alias = (String)enumeration.nextElement();
-            Certificate certificate = keyStore.getCertificate(alias);
+            X509Certificate certificate = (X509Certificate)keyStore.getCertificate(alias);
+            System.out.println( " 输出证书信息:\n " + certificate.toString());
+            System.out.println( " 版本号: " + certificate.getVersion());
+            System.out.println( " 序列号: " + certificate.getSerialNumber().toString( 16 ));
+            System.out.println( " 主体名： " + certificate.getSubjectDN());
+            System.out.println( " 签发者： " + certificate.getIssuerDN());
+            System.out.println( " 有效期： " + certificate.getNotAfter());
+            System.out.println( " 签名算法： " + certificate.getSigAlgName());
         }
         System.out.println("是否包含："+keyStore.containsAlias(alias));
+        Certificate c = keyStore.getCertificate(alias);
+        byte[] encode = c.getEncoded();
+        X509CertImpl impl = new X509CertImpl(encode);
+        //获取X509CertInfo对象
+        X509CertInfo info = (X509CertInfo)impl.get(X509CertImpl.NAME + "." + X509CertImpl.INFO);
+        //获取X509Name类型的签发者信息
+        X500Name issuer = (X500Name)info.get(X509CertInfo.SUBJECT + "." + X509CertInfo.DN_NAME);
+
+        testHttps();
+
+
+    }
+
+    public static void testHttps()throws Exception{
+        URL url = new URL("https://www.wutao.com/examples/");
+        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+
+        conn.setDoInput(true);
+        conn.setDoOutput(true);
+
+        CertificateCoder.configSSLSocketFactory(conn, password,
+                keyStorePath, keyStorePath);
+
+        InputStream is = conn.getInputStream();
+
+        int length = conn.getContentLength();
+
+        DataInputStream dis = new DataInputStream(is);
+        byte[] data = new byte[length];
+        dis.readFully(data);
+
+        dis.close();
+        System.err.println(new String(data));
+        conn.disconnect();
     }
 }
