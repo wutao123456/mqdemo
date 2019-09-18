@@ -6,8 +6,11 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
-import java.security.cert.*;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.Date;
+import java.util.Enumeration;
 
 /**
  * @author wutao
@@ -22,6 +25,13 @@ public class CertificateCoder extends Coder {
 
     public static final String X509 = "X.509";
 
+    /**
+     * 根据密钥库路径获取密钥库
+     * @param keyStorePath
+     * @param password
+     * @return
+     * @throws Exception
+     */
     private static KeyStore getKeyStore(String keyStorePath, String password) throws Exception {
         FileInputStream fis = new FileInputStream(keyStorePath);
         KeyStore ks = KeyStore.getInstance(KEY_STORE);
@@ -156,9 +166,11 @@ public class CertificateCoder extends Coder {
      * @throws Exception
      */
     public static String sign(byte[] data,String keyStorePath, String alias, String password)throws Exception{
-        PrivateKey privateKey = getPrivateKey(alias,keyStorePath,password);
+        X509Certificate x509Certificate = (X509Certificate)getCertificate(alias,keyStorePath,password);
+        KeyStore keyStore = getKeyStore(keyStorePath,password);
+        PrivateKey privateKey = (PrivateKey)keyStore.getKey(alias,password.toCharArray());
 
-        Signature signature = Signature.getInstance(privateKey.getAlgorithm());
+        Signature signature = Signature.getInstance(x509Certificate.getSigAlgName());
         signature.initSign(privateKey);
         signature.update(data);
         return encryptBASE64(signature.sign());
@@ -173,8 +185,10 @@ public class CertificateCoder extends Coder {
      * @throws Exception
      */
     public static boolean verify(byte[] data,String certificatePath,String sign)throws Exception{
-        PublicKey publicKey = getPublicKey(certificatePath);
-        Signature signature = Signature.getInstance(publicKey.getAlgorithm());
+        //从证书获取公钥
+        X509Certificate x509Certificate = (X509Certificate)getCertificate(certificatePath);
+        PublicKey publicKey = x509Certificate.getPublicKey();
+        Signature signature = Signature.getInstance(x509Certificate.getSigAlgName());
         signature.initVerify(publicKey);
         signature.update(data);
         return signature.verify(decryptBASE64(sign));
@@ -194,9 +208,40 @@ public class CertificateCoder extends Coder {
                 certificatePath);
 
         byte[] decrypt = CertificateCoder.decryptByPrivateKey(encrypt,
-                keyStorePath, alias, password);
+                alias, keyStorePath, password);
         String outputStr = new String(decrypt);
 
         System.err.println("加密前: " + inputStr + "\n\r" + "解密后: " + outputStr);
+
+
+
+
+
+        System.err.println("私钥加密——公钥解密");
+        String signIn = "sign";
+        byte[] signBytes = signIn.getBytes();
+
+        byte[] encryptData = CertificateCoder.encryptByPrivateKey(signBytes,
+                alias,keyStorePath,password);
+
+        byte[] decryptData = CertificateCoder.decryptByPublicKey(encryptData,
+                certificatePath);
+        String signOut = new String(decryptData);
+
+        System.err.println("加密前: " + signIn + "\n\r" + "解密后: " + signOut);
+
+        String sign = CertificateCoder.sign(signBytes,keyStorePath,alias,password);
+        System.out.println("签名："+sign);
+
+        boolean verify = CertificateCoder.verify(signBytes,certificatePath,sign);
+        System.out.println("验证签名："+verify);
+
+        KeyStore keyStore = getKeyStore(keyStorePath,password);
+        Enumeration enumeration = keyStore.aliases();
+        while (enumeration.hasMoreElements()){
+            String alias = (String)enumeration.nextElement();
+            Certificate certificate = keyStore.getCertificate(alias);
+        }
+        System.out.println("是否包含："+keyStore.containsAlias(alias));
     }
 }
