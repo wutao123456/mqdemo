@@ -240,6 +240,9 @@ public class CertificateCoder extends Coder {
     private static String certificatePath = "f:/wutao.cer";
     private static String keyStorePath = "f:/wutao.keystore";
 
+    private static String p12Path = "d:/cert/apiclient_cert.p12";
+    private static String p12_pwd = "1398364202";
+
     public static void main(String[] args) throws Exception{
         System.err.println("公钥加密——私钥解密");
         String inputStr = "Ceritifcate";
@@ -303,6 +306,7 @@ public class CertificateCoder extends Coder {
 
         testHttps();
 
+        testP12();
 
     }
 
@@ -327,5 +331,25 @@ public class CertificateCoder extends Coder {
         dis.close();
         System.err.println(new String(data));
         conn.disconnect();
+    }
+
+    public static void testP12()throws Exception{
+        KeyStore keyStore = getKeyStore(p12Path,p12_pwd);
+        Enumeration enumeration = keyStore.aliases();
+        //从密钥库中遍历证书
+        while (enumeration.hasMoreElements()){
+            String alias = (String) enumeration.nextElement();
+            System.out.println("p12's alias----->"+alias);
+            //私钥
+            PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias,p12_pwd.toCharArray());
+            String privateKeyStr = encryptBASE64(privateKey.getEncoded());
+            System.out.println("私钥------------->" + privateKeyStr);
+
+            //公钥
+            Certificate certificate = keyStore.getCertificate(alias);
+            String publicKeyStr = encryptBASE64(certificate.getPublicKey().getEncoded());
+            System.out.println("公钥------------->"+publicKeyStr);
+
+        }
     }
 }
