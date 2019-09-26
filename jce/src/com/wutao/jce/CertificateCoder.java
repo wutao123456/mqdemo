@@ -1,5 +1,14 @@
 package com.wutao.jce;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContextBuilder;
 import sun.security.x509.X500Name;
 import sun.security.x509.X509CertImpl;
 import sun.security.x509.X509CertInfo;
@@ -8,12 +17,11 @@ import javax.crypto.Cipher;
 import javax.net.ssl.*;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.Signature;
+import java.nio.charset.Charset;
+import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -235,6 +243,23 @@ public class CertificateCoder extends Coder {
         connection.setSSLSocketFactory(getSSLSocketFactory(password,keyStorePath,trustKeyStorePath));
     }
 
+    public static CloseableHttpClient createSSLClientDefault(){
+        try {
+            SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null,new TrustSelfSignedStrategy()).build();
+            HostnameVerifier hostnameVerifier = NoopHostnameVerifier.INSTANCE;
+            SSLConnectionSocketFactory sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslContext,hostnameVerifier);
+            return HttpClients.custom().setSSLSocketFactory(sslConnectionSocketFactory).build();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
+
+        return HttpClients.createDefault();
+    }
+
     private static String password = "123456";
     private static String alias = "www.wutao.com";
     private static String certificatePath = "f:/wutao.cer";
@@ -308,6 +333,8 @@ public class CertificateCoder extends Coder {
 
         testP12();
 
+        testHttpClient();
+
     }
 
     public static void testHttps()throws Exception{
@@ -331,6 +358,27 @@ public class CertificateCoder extends Coder {
         dis.close();
         System.err.println(new String(data));
         conn.disconnect();
+    }
+
+    public static void testHttpClient(){
+        try {
+            CloseableHttpClient httpClient = createSSLClientDefault();
+            HttpPost post = new HttpPost("https://www.wutao.com/examples/");
+            // 构造消息头
+            post.setHeader("Content-type", "application/json; charset=utf-8");
+            post.setHeader("Connection", "Close");
+            // 构建消息实体
+            StringEntity entity = new StringEntity("", Charset.forName("UTF-8"));
+            entity.setContentEncoding("UTF-8");
+            // 发送Json格式的数据请求
+            entity.setContentType("application/json");
+            post.setEntity(entity);
+            //发送请求
+            HttpResponse response = httpClient.execute(post);
+            System.out.println(111);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void testP12()throws Exception{
