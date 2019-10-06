@@ -362,6 +362,7 @@ public class CertificateCoder extends Coder {
 
     public static void testHttpClient(){
         try {
+
             CloseableHttpClient httpClient = createSSLClientDefault();
             HttpPost post = new HttpPost("https://www.wutao.com/examples/");
             // 构造消息头
