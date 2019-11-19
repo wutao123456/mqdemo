@@ -1,0 +1,94 @@
+package sso.entity;
+
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.validation.constraints.Size;
+
+/**
+ * @author wutao
+ * @email wutao56789@gmail.com
+ * @date 2019/11/14 22:36
+ * 由于需要邮箱，手机号，所以需要自定义Credential
+ */
+public class CustomCredential extends UsernamePasswordCredential {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomCredential.class);
+
+    private static final long serialVersionUID = -4166149641561667276L;
+
+    @Size(min = 1,message = "require email")
+    private String email;
+
+    @Size(min = 1,message = "require telephone")
+    private String telephone;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
+
+    public CustomCredential() {
+    }
+
+    public CustomCredential(String email, String telephone) {
+        this.email = email;
+        this.telephone = telephone;
+    }
+
+    public boolean equals(final Object o) {
+        if (o == this) {
+            return true;
+        } else if (!(o instanceof CustomCredential)) {
+            return false;
+        } else {
+            CustomCredential other = (CustomCredential) o;
+            if (!other.canEqual(this)) {
+                return false;
+            } else {
+                Object this$email = this.email;
+                Object other$email = other.email;
+                if (this$email == null) {
+                    if (other$email != null) {
+                        return false;
+                    }
+                } else if (!this$email.equals(other$email)) {
+                    return false;
+                }
+
+                Object this$telephone = this.telephone;
+                Object other$telephone = other.telephone;
+                if (this$telephone == null) {
+                    if (other$telephone != null) {
+                        return false;
+                    }
+                } else if (!this$telephone.equals(other$telephone)) {
+                    return false;
+                }
+                return true;
+            }
+        }
+    }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof CustomCredential;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(this.email).append(this.telephone).toHashCode();
+    }
+}

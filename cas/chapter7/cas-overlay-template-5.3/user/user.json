@@ -1,0 +1,15 @@
+{
+  "@class" : "java.util.LinkedHashMap",
+  "wutao" : {
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
+    "password" : "wutao",
+    "attributes" : {
+      "@class" : "java.util.LinkedHashMap",
+      "firstName" : "wu",
+      "lastName" : "tao"
+    },
+    "status" : "OK",
+    "expirationDate" : "2019-11-02"
+  }
+}
+s
