@@ -22,6 +22,7 @@ public class NIOServer {
         Selector selector = Selector.open();
         serverSocketChannel.configureBlocking(false);
         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+        System.out.println("注册后的selectionKey的数量= "+selector.keys().size());
 
         while (true){
             if(selector.select(1000) == 0){
@@ -30,6 +31,7 @@ public class NIOServer {
             }
 
             Set<SelectionKey> selectionKeys = selector.selectedKeys();
+            System.out.println("发生事件的selectionKey的数量= "+selector.selectedKeys().size());
             Iterator<SelectionKey> iterator = selectionKeys.iterator();
             while (iterator.hasNext()){
                 SelectionKey key = iterator.next();
@@ -38,6 +40,7 @@ public class NIOServer {
                     System.out.println("客户端连接成功,生成了一个socketChannel "+channel.hashCode());
                     channel.configureBlocking(false);
                     channel.register(selector,SelectionKey.OP_READ,ByteBuffer.allocate(1024));
+                    System.out.println("注册后的selectionKey的数量= "+selector.keys().size());
                 }
 
                 if(key.isReadable()){
