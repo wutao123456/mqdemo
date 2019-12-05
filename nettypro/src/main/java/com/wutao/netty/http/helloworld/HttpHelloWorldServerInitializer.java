@@ -23,9 +23,11 @@ public class HttpHelloWorldServerInitializer extends ChannelInitializer<SocketCh
     public void initChannel(SocketChannel ch) {
         ChannelPipeline p = ch.pipeline();
         if (this.sslCtx != null) {
+            //开启SSL(加/解密) SslHandler
             p.addLast(new ChannelHandler[]{this.sslCtx.newHandler(ch.alloc())});
         }
 
+        //添加HTTP服务端编/解码器
         p.addLast(new ChannelHandler[]{new HttpServerCodec()});
         p.addLast(new ChannelHandler[]{new HttpServerExpectContinueHandler()});
         p.addLast(new ChannelHandler[]{new HttpHelloWorldServerHandler()});
