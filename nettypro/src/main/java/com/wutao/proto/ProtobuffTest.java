@@ -7,7 +7,12 @@ package com.wutao.proto;
 public class ProtobuffTest {
 
     public static void main(String[] args) throws Exception{
-        ProtoDemo.Student student = ProtoDemo.Student.newBuilder().setId(1).setName("test").setEmail("test@163.com").build();
+        ProtoDemo.Student.PhoneNumber.Builder phoneNumberBuilder = ProtoDemo.Student.PhoneNumber.newBuilder();
+        phoneNumberBuilder.setType(ProtoDemo.Student.PhoneType.HOME);
+        phoneNumberBuilder.setNumber("13163314881");
+
+        ProtoDemo.Student.PhoneNumber phoneNumber = ProtoDemo.Student.PhoneNumber.newBuilder().setType(ProtoDemo.Student.PhoneType.WORK).setNumber("17501678967").build();
+        ProtoDemo.Student student = ProtoDemo.Student.newBuilder().setId(1).setName("test").setEmail("test@163.com").addPhone(phoneNumberBuilder).addPhone(phoneNumber).build();
 
         byte[] student2ByteArray = student.toByteArray();
 
