@@ -1,5 +1,6 @@
 package com.wutao.proto;
 
+import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import java.io.ByteArrayInputStream;
@@ -33,20 +34,20 @@ public class ProtoTest {
             /** Step2：序列化和反序列化 */
             // 方式一 byte[]：
             // 序列化
-//            byte[] bytes = personTest.toByteArray();
+            byte[] bytes = personTest.toByteArray();
             // 反序列化
-//            PersonTestProtos.PersonTest personTestResult = PersonTestProtos.PersonTest.parseFrom(bytes);
-//            System.out.println(String.format("反序列化得到的信息，姓名：%s，性别：%d，手机号：%s", personTestResult.getName(), personTest.getSexValue(), personTest.getPhone(0).getNumber()));
+            PersonTestProtos.PersonTest personTestResult = PersonTestProtos.PersonTest.parseFrom(bytes);
+            System.out.println(String.format("反序列化得到的信息，姓名：%s，性别：%d，手机号：%s", personTestResult.getName(), personTest.getSexValue(), personTest.getPhone(0).getNumber()));
 
 
 
             // 方式二 ByteString：
             // 序列化
-//            ByteString byteString = personTest.toByteString();
-//            System.out.println(byteString.toString());
+            ByteString byteString = personTest.toByteString();
+            System.out.println(byteString.toString());
             // 反序列化
-//            PersonTestProtos.PersonTest personTestResult = PersonTestProtos.PersonTest.parseFrom(byteString);
-//            System.out.println(String.format("反序列化得到的信息，姓名：%s，性别：%d，手机号：%s", personTestResult.getName(), personTest.getSexValue(), personTest.getPhone(0).getNumber()));
+            PersonTestProtos.PersonTest personTestResult2 = PersonTestProtos.PersonTest.parseFrom(byteString);
+            System.out.println(String.format("反序列化得到的信息，姓名：%s，性别：%d，手机号：%s", personTestResult2.getName(), personTestResult2.getSexValue(), personTestResult2.getPhone(0).getNumber()));
 
 
 
@@ -57,8 +58,8 @@ public class ProtoTest {
             personTest.writeDelimitedTo(byteArrayOutputStream);
             // 反序列化，从 steam 中读取一个或者多个 protobuf 字节对象
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-            PersonTestProtos.PersonTest personTestResult = PersonTestProtos.PersonTest.parseDelimitedFrom(byteArrayInputStream);
-            System.out.println(String.format("反序列化得到的信息，姓名：%s，性别：%d，手机号：%s", personTestResult.getName(), personTest.getSexValue(), personTest.getPhone(0).getNumber()));
+            PersonTestProtos.PersonTest personTestResult3 = PersonTestProtos.PersonTest.parseDelimitedFrom(byteArrayInputStream);
+            System.out.println(String.format("反序列化得到的信息，姓名：%s，性别：%d，手机号：%s", personTestResult3.getName(), personTestResult3.getSexValue(), personTestResult3.getPhone(0).getNumber()));
 
         } catch (InvalidProtocolBufferException e) {
             e.printStackTrace();

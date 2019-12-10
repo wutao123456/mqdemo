@@ -1,11 +1,13 @@
 package com.wutao.netty.http.helloworld;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
+import io.netty.util.CharsetUtil;
 
 /**
  * @author wutao
@@ -25,8 +27,9 @@ public class HttpHelloWorldServerHandler extends SimpleChannelInboundHandler<Htt
         if (msg instanceof HttpRequest) {
             HttpRequest req = (HttpRequest)msg;
             boolean keepAlive = HttpUtil.isKeepAlive(req);
-            FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(CONTENT));
-            response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain");
+            ByteBuf byteBuf = Unpooled.copiedBuffer("这里是服务端", CharsetUtil.UTF_8);
+            FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(byteBuf));
+            response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain;charset=UTF-8");
             response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
             if (keepAlive && req.protocolVersion().equals(HttpVersion.HTTP_1_0)) {
                 response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
