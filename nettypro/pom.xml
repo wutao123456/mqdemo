@@ -51,6 +51,14 @@
       <version>4.1.35.Final</version>
     </dependency>
 
+    <!-- https://mvnrepository.com/artifact/org.jboss.marshalling/jboss-marshalling -->
+    <dependency>
+      <groupId>org.jboss.marshalling</groupId>
+      <artifactId>jboss-marshalling</artifactId>
+      <version>2.0.9.Final</version>
+    </dependency>
+
+
     <!--protobuf相关start-->
     <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
     <dependency>
