@@ -4,7 +4,6 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.example.telnet.TelnetServerHandler;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
@@ -18,7 +17,7 @@ import io.netty.handler.ssl.SslContext;
 public class TelnetServerInitializer extends ChannelInitializer<SocketChannel> {
     private static final StringDecoder DECODER = new StringDecoder();
     private static final StringEncoder ENCODER = new StringEncoder();
-    private static final io.netty.example.telnet.TelnetServerHandler SERVER_HANDLER = new TelnetServerHandler();
+    private static final TelnetServerHandler SERVER_HANDLER = new TelnetServerHandler();
     private final SslContext sslCtx;
 
     public TelnetServerInitializer(SslContext sslCtx) {
