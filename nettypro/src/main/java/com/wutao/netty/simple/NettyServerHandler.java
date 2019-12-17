@@ -34,6 +34,8 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 //            System.out.println("发生异常: "+e.getMessage());
 //        }
 
+
+        System.out.println("channelRead 线程" +Thread.currentThread().getName());
         //用户自定义任务
         //业务非常耗时->异步执行->提交到该channel对应的NioEventLoop的taskQueue
         ctx.channel().eventLoop().execute(new Runnable() {
@@ -41,6 +43,8 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
             public void run() {
                 try {
                     Thread.sleep(10 * 1000);
+                    //当前线程与外部线程是同一线程
+                    System.out.println("execute 线程" +Thread.currentThread().getName());
                     ctx.writeAndFlush(Unpooled.copiedBuffer("hello 客户端 瞄2", CharsetUtil.UTF_8));
                 }catch (Exception e){
                     System.out.println("发生异常: "+e.getMessage());

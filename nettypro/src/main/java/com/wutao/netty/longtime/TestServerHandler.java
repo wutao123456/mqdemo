@@ -5,10 +5,10 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.CharsetUtil;
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
+import io.netty.util.concurrent.EventExecutorGroup;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * @author wutao
@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
  */
 public class TestServerHandler extends ChannelInboundHandlerAdapter {
 
-    private ExecutorService executorService = Executors.newCachedThreadPool();
+    static final EventExecutorGroup group = new DefaultEventExecutorGroup(16);
 
     //我们模拟了一个耗时 10 秒的操作，于是，我们将这个任务提交到了一个自定义的业务线程池中，这样，就不会阻塞 Netty 的 IO 线程
 
@@ -27,7 +27,7 @@ public class TestServerHandler extends ChannelInboundHandlerAdapter {
 
         final Object msgc = msg;
         final ChannelHandlerContext context = ctx;
-        executorService.submit(new Callable<Object>() {
+        group.submit(new Callable<Object>() {
 
             @Override
             public Object call() throws Exception {
