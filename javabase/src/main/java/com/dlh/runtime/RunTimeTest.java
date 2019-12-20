@@ -2,6 +2,8 @@ package com.dlh.runtime;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Map;
+import java.util.Properties;
 
 public class RunTimeTest {
 
@@ -16,7 +18,7 @@ public class RunTimeTest {
 
 
         Process process = Runtime.getRuntime().exec("javac -version");
-        BufferedReader br = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+        BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line = null;
         while ((line = br.readLine()) != null)
             System.out.println(line);
@@ -25,6 +27,22 @@ public class RunTimeTest {
 
 
         System.out.println(System.getProperty("os.name"));
+
+        //获取系统环境变量
+        System.out.println(">>>>>>>>>>>>> system env");
+        Map<String,String> env = System.getenv();
+        for(Map.Entry<String,String> entry:env.entrySet()){
+            System.out.println(""+entry.getKey()+" : "+entry.getValue());
+        }
+
+        //获取系统属性
+        Properties properties = System.getProperties();
+        for(String key :properties.stringPropertyNames()){
+            System.out.println(key+" : "+ properties.getProperty(key));
+        }
+
+        //获取系统核心数
+        Runtime.getRuntime().availableProcessors();
 
     }
 }
