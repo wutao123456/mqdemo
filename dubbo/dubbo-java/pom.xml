@@ -45,6 +45,13 @@
             <version>${dubbo.version}</version>
         </dependency>
 
+        <!--开启qos-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>dubbo-qos</artifactId>
+            <version>${dubbo.version}</version>
+        </dependency>
+
         <!-- zookeeper -->
         <dependency>
             <groupId>org.apache.zookeeper</groupId>
