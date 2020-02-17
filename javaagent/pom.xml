@@ -57,8 +57,12 @@
               <!--https://www.jianshu.com/p/d44f713b1ec9-->
 <!--              <manifestFile>src/main/java/META-INF/MANIFEST.MF</manifestFile>-->
 
+              <!--另外的再说一种不去手动写MANIFREST.MF文件的方式，使用maven插件：-->
               <manifestEntries>
                 <Premain-Class>com.dlh.App</Premain-Class>
+                <Agent-Class>com.dlh.App</Agent-Class>
+                <Can-Redefine-Classes>true</Can-Redefine-Classes>
+                <Can-Retransform-Classes>true</Can-Retransform-Classes>
               </manifestEntries>
             </archive>
           </configuration>
