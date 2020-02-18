@@ -57,10 +57,15 @@
               <!--https://www.jianshu.com/p/d44f713b1ec9-->
 <!--              <manifestFile>src/main/java/META-INF/MANIFEST.MF</manifestFile>-->
 
+
+                <!--自动添加META-INF/MANIFEST.MF -->
+                <manifest>
+                    <addClasspath>true</addClasspath>
+                </manifest>
               <!--另外的再说一种不去手动写MANIFREST.MF文件的方式，使用maven插件：-->
               <manifestEntries>
                 <Premain-Class>com.dlh.App</Premain-Class>
-                <Agent-Class>com.dlh.App</Agent-Class>
+                <Agent-Class>com.dlh.AgentMainTest</Agent-Class>
                 <Can-Redefine-Classes>true</Can-Redefine-Classes>
                 <Can-Retransform-Classes>true</Can-Retransform-Classes>
               </manifestEntries>
